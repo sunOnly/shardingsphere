@@ -35,19 +35,19 @@ import java.sql.SQLException;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MySQLErrPacketFactory {
-    
+
     /**
      * New instance of MySQL ERR packet.
-     * 
+     *
      * @param sequenceId sequence ID
-     * @param cause cause
+     * @param cause      cause
      * @return instance of MySQL ERR packet
      */
     public static MySQLErrPacket newInstance(final int sequenceId, final Exception cause) {
         if (cause instanceof SQLException) {
             SQLException sqlException = (SQLException) cause;
             return null != sqlException.getSQLState() ? new MySQLErrPacket(sequenceId, sqlException.getErrorCode(), sqlException.getSQLState(), sqlException.getMessage())
-                : new MySQLErrPacket(sequenceId, MySQLServerErrorCode.ER_INTERNAL_ERROR, sqlException.getCause().getMessage());
+                    : new MySQLErrPacket(sequenceId, MySQLServerErrorCode.ER_INTERNAL_ERROR, sqlException.getCause() == null ? sqlException.getMessage() : sqlException.getCause().getMessage());
         }
         if (cause instanceof ShardingCTLException) {
             ShardingCTLException shardingCTLException = (ShardingCTLException) cause;
